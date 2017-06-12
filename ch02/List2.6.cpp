@@ -43,8 +43,8 @@ int main()
   int some_local_state;
   some_local_state = 1;
   func myfunc(some_local_state);
-  Scoped_thread t2(std::thread(myfunc));
-  for (unsigned j = 0; j < 1000; j++)
+  Scoped_thread t2{std::thread(myfunc)};
+  for (unsigned j = 0; j < 1000000; j++)
   {
     cout << "Main thread " << j << endl;
   }
