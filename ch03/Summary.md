@@ -46,3 +46,6 @@ The author provide many useful advice to avoid **deadlock** problem. Guidelines 
 - Don't aquire lock if you already hold One
 - Avoid calling user-supplied code while holding a lock
 - Acquire lock in a fixed order
+- Use a lock hierarchy
+
+A lock hierarchy can provide a means of checking that the lock order is adhered to at runtime. 
