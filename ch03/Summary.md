@@ -49,3 +49,32 @@ The author provide many useful advice to avoid **deadlock** problem. Guidelines 
 - Use a lock hierarchy
 
 A lock hierarchy can provide a means of checking that the lock order is adhered to at runtime. You can divide your application into layers and identify all the mutexes that may be lockd in any given layer. Look at `List3.8.cpp` for implementation details. `this_thread_hierachy_value` is declared as `thread_local`, thus the state of the variable in one thread is entirely independent of the state of the variable when read from another thread.
+
+### unique_lock
+In `<mutex>`, three special types:
+- `defer_lock_t`
+- `try_to_lock_t`
+- `adopt_lock_t`
+
+Type | Effect
+------|-------
+`defer_lock_t` | do not acquire ownership of the mutex
+`try_to_lock_t` | try to acquire ownership of the mutex
+`adopt_lock_t` | assume the calling thread already has the oownership of mutex
+
+    class X
+    {
+      friend bool operator =(X const& lhs, X const& rhs)
+      {
+        if (&lhs == &rhs)
+          return false;
+        std::unique_lock<std::mutex> lock_a(lhs.m, std::defer_lock);
+        std::unique_lock<std::mutex> lock_b(rhs.m, std::defer_lock);
+        std::lock(lock_a, lock_b);
+        return true;
+      }
+    }
+`unique_lock` is a general-purpose mutex ownership wrapper allowing deferred locking, time-constrained attempts at locking, recursive locking, transfer of lock ownership, and use with condition variables.
+
+### Transferring Mutex ownership
+Thread ownership transfer may be automatic for `rvalue` and forced with `std::move()` for `lvalue`. 
