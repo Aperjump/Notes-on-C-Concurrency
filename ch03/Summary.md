@@ -48,4 +48,4 @@ The author provide many useful advice to avoid **deadlock** problem. Guidelines 
 - Acquire lock in a fixed order
 - Use a lock hierarchy
 
-A lock hierarchy can provide a means of checking that the lock order is adhered to at runtime. 
+A lock hierarchy can provide a means of checking that the lock order is adhered to at runtime. You can divide your application into layers and identify all the mutexes that may be lockd in any given layer. Look at `List3.8.cpp` for implementation details. `this_thread_hierachy_value` is declared as `thread_local`, thus the state of the variable in one thread is entirely independent of the state of the variable when read from another thread.
