@@ -18,3 +18,19 @@ The thread which intends to waiti on `condition_variable`:
 `<condition_variable>` header has two implementations: `std::condition_variable`, `std::condition_variable_any`.
 `condition_variable` acquire `mutex`.
 `condition_variable_any` acquire mutex-like data.
+I've written a test file in `Listing4.1.cpp`. Notice the use of `wait` method in `condition_variable`. If the condition is not satisfied, `wait()` unlocks the mutex and puts the thread in a blocked or waiting time. When the condition variable is notified by a call to `notify_one()` from the data_preparation_thread, the thread wakes from its slumber, reacquires the lock on the mutex. If the condition hasn't been satisfied, the thread unlocks the mutex and resumes waiting. **Use `unique_lock` rather than `lock_guard`**. The waiting thread must unlock the mutex while its waiting and lock it again afterward, and `lock_guard` does not provide the flexibility.
+
+Member functions in `condition_variable`:
+- `notify_one`
+- `notify_all`
+
+- `wait`
+- `wait_for`
+- `wait_until`
+
+signature of `wait`
+`void wait(std::unique_lock<std::mutex>& lock)`
+`void wait(std::unique_lock<std::mutex>& lock, predicate)`
+predicate will return `false`, if the waiting should be continued.
+
+When the waiting thread reacquires the mutex and checks the condition, if it isn't in direct response to a notification from another thread, it's called **spurious wake**. 
