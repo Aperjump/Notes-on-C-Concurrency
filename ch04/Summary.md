@@ -33,4 +33,17 @@ signature of `wait`
 `void wait(std::unique_lock<std::mutex>& lock, predicate)`
 predicate will return `false`, if the waiting should be continued.
 
-When the waiting thread reacquires the mutex and checks the condition, if it isn't in direct response to a notification from another thread, it's called **spurious wake**. 
+When the waiting thread reacquires the mutex and checks the condition, if it isn't in direct response to a notification from another thread, it's called **spurious wake**.
+
+### 2. futures
+If a thread needs to wait for a specific one-off event, it somehow obtains a future representing this event. The thread can then periodically wait on the future for short period of time to see if the event has occurred while performing some other task in between checks. Alternatively, it can do another task until it needs the event to have happened before it can proceed and then just wait for the future to become ready.
+
+`<future>` has two class templates: unique future(`std::future`), and shared_future(`std::shared_future`). In `shared_future`, all instances will become ready at the same time, they may all access any data associated with the event. Althugh futures are used to communicate between threads, the future object themselves don't provide synchronized accesses. If multiple threads need to access a single future object, they must protect access via a mutex or other synchronizaion mechanism.
+
+You can use `std::async`to start an **asynchronous** task for which you don't need right away. Rather than giving you back a `std::thread` object to wait on, `std::async` returns a `std::future` object, which will eventually hold the return value of the function.
+
+    auto f6 = std::async(std::launch::async, Y(), 1.2);
+    // The function runs on its own thread
+    auto f7 = std::async(std::launch::deferred, baz, std::ref(x));
+    //function call is deferred until either `wait()` or `get()` is called on future
+    auto f8 = std::async(std::launch::deferred | std::launch::async, baz, std::ref(x));
