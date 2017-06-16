@@ -55,3 +55,57 @@ The return type of the specified function signature identifies the type of `std:
 
 `std::promise<T>` provides a means of a setting a value, which can later be read through an associated `future<T>` object.
 The class template `std::promise` provides a facility to store a value or an exception that is later acquired asynchronously via `std::future` object created by `std::promise` object. Each promise is associated with a share state, which contains some state information and a result which may be not yet evaluated.
+Exception handling:
+
+    extern std::promise<double> some_promise;
+    try
+    {
+      some_promise.set_value(calculate_value());
+    }
+    catch(...)
+    {
+      some_promise.set_exception(std::current_exception());
+    }
+`std::future` models unique ownership of the asynchronous result. Only one thread can retrive the value, because after the first call to get() there is no value left.
+`std::shared_future` instances are **copyable**, so you can have multiple objects referring the same associated state.
+
+    std::promise<int> p;
+    std::future<int> f(p.get_future());
+    std::shared_future<int> sf(move(f));
+
+    std::promise<string> p;
+    std::shared_future<string> sf(p.get_future());
+
+
+## wait
+`condition_variable` has two overloads of the `wait_for()` member function and two overloads of the `wait_until` member functions.  Clocks are reserved in `<chrono>` library.
+### Durations
+`std::chrono::duration<>` The first template parameter is the type of the representation, and the second is a fraction specifying how many seconds each unit of the duration represents. `chrono::duration<short, ratio<1,60>>`->minutes
+
+    chrono::milliseconds ms(54802);
+    chrono::seconds s = chrono::duration_cast<chrono::seconds>(ms);
+
+    future<int> f = async(some_task);
+    if (f.wait_for(chrono::milliseconds(35)) == future_status::ready)
+      do_some_thing_with(f.get());
+The function returns `std::future_status::timeout` or `std::future_status::ready` if future is ready, or `future_status_deferred` if the future's task is deferred.
+### Time points
+`chrono::time_point<>`
+The value of a time point is the length of time(in multiple of the specified duration) since a specific point in time called the epoch of the clock.
+`chrono::time_point<chrono::system_clock, chrono::minutes>`
+
+    condition_variable cv;
+    bool done;
+    mutex m;
+    bool wait_loop()
+    {
+      auto const timeout = std::chrono::steady_clock()::now() +
+        chrono::miliseconds(500);
+      unique_lock<mutex> lk(m);
+      while(!done)
+      {
+        if (cv.wait_until(lk, timeout) == cv_status::timeout)
+          break;
+      }
+      return done;
+    }
