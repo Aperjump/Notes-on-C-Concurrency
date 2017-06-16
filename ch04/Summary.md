@@ -40,10 +40,18 @@ If a thread needs to wait for a specific one-off event, it somehow obtains a fut
 
 `<future>` has two class templates: unique future(`std::future`), and shared_future(`std::shared_future`). In `shared_future`, all instances will become ready at the same time, they may all access any data associated with the event. Althugh futures are used to communicate between threads, the future object themselves don't provide synchronized accesses. If multiple threads need to access a single future object, they must protect access via a mutex or other synchronizaion mechanism.
 
-You can use `std::async`to start an **asynchronous** task for which you don't need right away. Rather than giving you back a `std::thread` object to wait on, `std::async` returns a `std::future` object, which will eventually hold the return value of the function.
+You can use `std::async`to start an **asynchronous** task for which you don't need right away. Rather than giving you back a `std::thread` object to wait on, `std::async` returns a `std::future` object, which will eventually hold the return value of the function. If the arguments are `rvalue`, the copies are created by `moving` the originals.
 
     auto f6 = std::async(std::launch::async, Y(), 1.2);
     // The function runs on its own thread
     auto f7 = std::async(std::launch::deferred, baz, std::ref(x));
     //function call is deferred until either `wait()` or `get()` is called on future
     auto f8 = std::async(std::launch::deferred | std::launch::async, baz, std::ref(x));
+
+### `package_task`
+`package_task<>` ties a future to a function or callable object. When the `std::package_task<>` object is invoked, it calls the associated function or callable object and makes the future ready, with the return value stored as the associated data. If a large operation can be divided into self-contained sub-tasks, each of these can be wrapped in a `std::package_task<>` instance, and the that instance passed to the scheduler or thread pool. This abstracts out the details of the tasks; the scheduler just deal with `std::package_task<>` instances rather than individual functions.
+
+The return type of the specified function signature identifies the type of `std::future<>` returned from the `get_future()` member function, whereas the argument list of the function signature is used to specify the signature of the packaged task's function call operator.
+
+`std::promise<T>` provides a means of a setting a value, which can later be read through an associated `future<T>` object.
+The class template `std::promise` provides a facility to store a value or an exception that is later acquired asynchronously via `std::future` object created by `std::promise` object. Each promise is associated with a share state, which contains some state information and a result which may be not yet evaluated.
