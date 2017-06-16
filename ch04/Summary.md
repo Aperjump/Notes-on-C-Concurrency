@@ -109,3 +109,6 @@ The value of a time point is the length of time(in multiple of the specified dur
       }
       return done;
     }
+`timed_mutex` and `recursive_timed_mutex` support timeouts on locking, both types support `try_lock_for()` and `try_lock_until()` member functions that try to obtain the lock within a specified time period or before a specified time point.
+
+## Using synchronization of operations to simplify
