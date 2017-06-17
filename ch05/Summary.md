@@ -23,3 +23,5 @@ Atomic operations are divided into three categories:
 - Store operations
 - Load operations
 - Read-modify-write operations
+###  `std::atomic_flag`
+`atomic_flag` must be initialized with `ATOMIC_FLAG_INIT`
