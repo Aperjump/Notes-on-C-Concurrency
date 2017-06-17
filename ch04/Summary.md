@@ -111,5 +111,6 @@ The value of a time point is the length of time(in multiple of the specified dur
     }
 `timed_mutex` and `recursive_timed_mutex` support timeouts on locking, both types support `try_lock_for()` and `try_lock_until()` member functions that try to obtain the lock within a specified time period or before a specified time point.
 
-## Using synchronization of operations to simplify
+## Using synchronization of operations to  code
 Using the synchronization facilities described so far in this Chapter as building blocks allows you to focus on the operations that need synchronizing rather than mechanics. One way this can help simplify your code is that it accommodates a much more `functional` approach to programming concurrency. Rather than sharing data directly between threads, each task can be provided with the data it needs, and the result can be disseminated to any other threads that need it through the use of futures.
+Another application using shared data is CSP(communicating sequential processes). True communicating sequential processes have no shared data, with all communication passed through the message queues, but because C++ threads share an address space, it's not possible to enforce this requirement. 
