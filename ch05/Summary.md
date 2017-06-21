@@ -88,3 +88,24 @@ The assignment operator from a nonatomic `bool` is that it differs from the gene
 - `store()` : modify contained value
 - `exchange()` : access and modify contained value
 - `load` : read contained value
+- `compare_exchange_weak()`
+- `compare_exchange_strong`
+
+We have `compare_exchange_weak(T& expected, T val,
+           memory_order sync = memory_order_seq_cst)` and `compare_exchange_strong(T& expected, T val,
+           memory_order sync = memory_order_seq_cst)`
+They compares the value of atomic variable with a supplied expected value and stores the supplied desired value if they're equal. If the values aren't equal, the expected value is updated with the actual value of atomic variable.
+`compare_exchange_weak()` may not be successful even if the original value was equal to the expected value, in which case the value of the variable is unchanged and the return value of `compare_exchange_weak()` is `false`. ---> **machine lacks a single compare-and-exchange instruction**.
+This is called **spurious failure**, and can be tested through :
+
+    bool expected = false;
+    extern atomic<bool> b;
+    while(!b.compare_exchange_weak(expected, true) && !expected);
+`compare_exchange_strong`, on the other hand, is guranteed to return false only if the actual value wasn't equal to the expected value.
+**Each time through the loop, `expected` is reloaded**.
+
+`std::atomic<T*>: pointer arithmetic`
+Besides normal operations, `std::atomic<T*>` also support `fetch_add` and `fetch_sub`
+
+### `atomic<>` primary class template
+In order to use `atomic<UDT>` for user-defined class `UDT`, this type must have a trivial copy-assignment operator. The type mustn't have any virtual functions or virtual base classes and must use the compiler-generated copy-assignment operator.
