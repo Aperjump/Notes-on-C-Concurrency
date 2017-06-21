@@ -79,3 +79,12 @@ Besides, you cannot assign or copy one `atomic_flag` with another variable, sinc
         flag.clear(std::memory_order_release);
       }
     }
+
+### `std::atomic<bool>`
+You can construct it from a nonatomic `bool`:
+`std::atomic<bool> b(true);`
+`b = false;`
+The assignment operator from a nonatomic `bool` is that it differs from the general convention of returnning a reference to the object it's assigned to: it returns a `bool` with the value assigned instead.
+- `store()` : modify contained value
+- `exchange()` : access and modify contained value
+- `load` : read contained value
