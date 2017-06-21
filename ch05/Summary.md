@@ -109,3 +109,5 @@ Besides normal operations, `std::atomic<T*>` also support `fetch_add` and `fetch
 
 ### `atomic<>` primary class template
 In order to use `atomic<UDT>` for user-defined class `UDT`, this type must have a trivial copy-assignment operator. The type mustn't have any virtual functions or virtual base classes and must use the compiler-generated copy-assignment operator.
+
+**I meet a bottleneck in understanding the material, maybe I should read more things in memory model, and I'll write another passage on that**
