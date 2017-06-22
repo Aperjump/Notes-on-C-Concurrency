@@ -48,6 +48,27 @@ Any load or store operation can effectively be reordered with any other load or 
 >A strong hardware memory model is one in which every machine instruction comes implicitly with acquire and release semantics. As a result, when one CPU core performs a sequence of writes, every other CPU core sees those values change in the same order that they were written.
 
 The x86/64 family of processors is usually strongly-ordered.
+
+You can enforece correct memory ordering on the processor by issuing any instruction which acts as a **memory barrier**.  
+Examples of instructions which act as memory barriers includes: `load(std::memory_order_acquire)`.
+In terms of different memory ordering techinques, I highly recommend this [passage](http://preshing.com/20120710/memory-barriers-are-like-source-control-operations/)
+**memory fence instructions** act as memory barrier. Four types: `#LoadLoad`, `#LoadStore`, `#StoreLoad`,`#StoreStore`.
+`#StoreLoad` is designed to prevent the reordering of a store followed by a load.
+#### `#LoadLoad`
+A LoadLoad barrier effectively prevents reordering of loads performed before the barrier with loads performed after the barrier.
+
+    if (IsPublished)                   // Load and check shared flag
+    {
+        LOADLOAD_FENCE();              // Prevent reordering of loads
+        load Value;                  // Load published value
+    }
+#### `#StoreStore`
+A StoreStore barrier effectively prevents reordering of stores performed before the barrier with stores performed after the barrier.
+
+    Value = x;                         // Publish some data
+    STORESTORE_FENCE();
+    IsPublished = 1;                   // Set shared flag to indicate availability of data
+
 ### Compiler reordering
 Compiler developers follow the rules of protecting behavior of single-threaded program. Thus, it largely unnoticed by programmers writing single-threaded code. It often goes unnoticed in multithreaded programming, too, since mutexes, semaphores and events are all designed to prevent memory reordering around their call sites.
 Since the compiler think your program is single-thread and and assume it thread-safe, the responsibility falls on programmers. Therefore, you need to tell the compiler when it is not allowed to reorder reads and writes.
@@ -62,7 +83,7 @@ The minimalist approach to preventing compiler reordering is by using a special 
         // <-- reordering is prevented here!
         IsPublished.store(1, std::memory_order_release);
     }
-**The majority of function calls act as a compiler barriers.** A call to external function is even stronger than a compiler barrier, since the compiler has no idea what the function's side effects will be. 
+**The majority of function calls act as a compiler barriers.** A call to external function is even stronger than a compiler barrier, since the compiler has no idea what the function's side effects will be.
 ### Sequential Consistency
 Sequential consistency means that all threads agree on the order in which memory operations occured, and that order is consistent with the order of operations in the program source code.
 Using C++ `atomic` types can achieve this, but the compiler outputs additional instructions behind the scenes, typically memory fences or RMW operations.
