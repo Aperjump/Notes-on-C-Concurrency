@@ -40,15 +40,29 @@ A write-release executes after all reads and writes by the same thread that prec
         // Write that releases the data.
         g_flag = false;
     }
+- Weak Memory Models:
 
+Any load or store operation can effectively be reordered with any other load or store operation, as long as it would never modify the behavior of a single, isolated thread.
+- Strong Memory Models:
+
+>A strong hardware memory model is one in which every machine instruction comes implicitly with acquire and release semantics. As a result, when one CPU core performs a sequence of writes, every other CPU core sees those values change in the same order that they were written.
+
+The x86/64 family of processors is usually strongly-ordered.
 ### Compiler reordering
+Compiler developers follow the rules of protecting behavior of single-threaded program. Thus, it largely unnoticed by programmers writing single-threaded code. It often goes unnoticed in multithreaded programming, too, since mutexes, semaphores and events are all designed to prevent memory reordering around their call sites.
 Since the compiler think your program is single-thread and and assume it thread-safe, the responsibility falls on programmers. Therefore, you need to tell the compiler when it is not allowed to reorder reads and writes.
+The minimalist approach to preventing compiler reordering is by using a special directive knowns as a **compiler barrier**. `_ReadWriteBarrier` works in MV C++. In C++11  atomic library standard, every non-relaxed atomic operation acts as a compiler barrier as well.
 
+    int Value;
+    std::atomic<int> IsPublished(0);
 
-
-
-
-
+    void sendValue(int x)
+    {
+        Value = x;
+        // <-- reordering is prevented here!
+        IsPublished.store(1, std::memory_order_release);
+    }
+**The majority of function calls act as a compiler barriers.** A call to external function is even stronger than a compiler barrier, since the compiler has no idea what the function's side effects will be. 
 ### Sequential Consistency
 Sequential consistency means that all threads agree on the order in which memory operations occured, and that order is consistent with the order of operations in the program source code.
 Using C++ `atomic` types can achieve this, but the compiler outputs additional instructions behind the scenes, typically memory fences or RMW operations.
