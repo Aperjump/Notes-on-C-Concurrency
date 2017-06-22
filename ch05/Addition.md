@@ -53,4 +53,7 @@ Since the compiler think your program is single-thread and and assume it thread-
 Sequential consistency means that all threads agree on the order in which memory operations occured, and that order is consistent with the order of operations in the program source code.
 Using C++ `atomic` types can achieve this, but the compiler outputs additional instructions behind the scenes, typically memory fences or RMW operations.
 ### Memory Reordering
-If your environment does not support **sequential consistency**, the only cure is to prevent **memory reordering** by prohibit **CPU reordering** and **compiler reordering**
+If your environment does not support **sequential consistency**, the only cure is to prevent **memory reordering** by prohibit **CPU reordering** and **compiler reordering**:
+- A lightweight sync or fence instruction
+- A full memory fence instruction
+- acquire or release semantics
