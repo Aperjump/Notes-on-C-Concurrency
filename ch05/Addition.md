@@ -69,6 +69,10 @@ A StoreStore barrier effectively prevents reordering of stores performed before 
     STORESTORE_FENCE();
     IsPublished = 1;                   // Set shared flag to indicate availability of data
 
+#### `#LoadStore`
+A LoadStore barrier ensures all load performed before barrier while store happens after the barrier.  
+#### `#StoreLoad`
+A StoreLoad barrier ensures that all stores performed before the barrier are visible to other processors, and that all loads performed after the barrier receive the latest value that is visible at the time of the barrier.
 ### Compiler reordering
 Compiler developers follow the rules of protecting behavior of single-threaded program. Thus, it largely unnoticed by programmers writing single-threaded code. It often goes unnoticed in multithreaded programming, too, since mutexes, semaphores and events are all designed to prevent memory reordering around their call sites.
 Since the compiler think your program is single-thread and and assume it thread-safe, the responsibility falls on programmers. Therefore, you need to tell the compiler when it is not allowed to reorder reads and writes.
