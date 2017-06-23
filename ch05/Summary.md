@@ -20,10 +20,11 @@ The standard atomic types are not copyable or assignable in the conventional sen
 The `std::atomic<>` class templates isn't just a set of specializations. It does have a primary template that can be used to create an atomic variant of a user-defined type. But the operators are limited to `load()`, `store()`, `exchange()`, `compare_exchange_weak()` and `compare_exchange_strong()`
 
 Atomic operations are divided into three categories:
-- Store operations
-- Load operations
-- Read-modify-write operations
+- Store operations : `memory_order_relaxed`, `memory_order_release`, `memory_order_seq_cst`
+- Load operations : `memory_order_relaxed`, `memory_order_consume`, `memory_order_acquire`, `memory_order_seq_cst`
+- Read-modify-write operations : `memory_order_relaxed`, `memory_order_consume`, `memory_order_release`, `memory_order_acq_rel`, `memory_order_seq_cst`
 
+The default order is `memory_order_seq_cst`. 
 ###  `std::atomic_flag`
 `atomic_flag` must be initialized with `ATOMIC_FLAG_INIT`
 Once you have your flag object initialized, there are only three things you can do with it: destroy it, clear it, or set it and query the previous value.

@@ -96,3 +96,12 @@ If your environment does not support **sequential consistency**, the only cure i
 - A lightweight sync or fence instruction
 - A full memory fence instruction
 - acquire or release semantics
+
+
+### C++ `<atomic>`
+**Acquire semantics** is a property that can only apply to operations that read from shared memory, whether they are read-modify-write operations or plain loads. The operation is then considered a read-acquire. Acquire semantics prevent memory reordering of the read-acquire with any read or write operation that follows it in program order.
+
+**Release semantics** is a property that can only apply to operations that write to shared memory, whether they are read-modify-write operations or plain stores. The operation is then considered a write-release. Release semantics prevent memory reordering of the write-release with any read or write operation that precedes it in program order.
+
+- `Read-acquire` : `#LoadLoad`, `#LoadStore`
+- `write-release` : `#LoadStore`, `#StoreStore`
