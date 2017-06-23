@@ -114,3 +114,18 @@ Besides, user-defined type must also be **bitwise equality comparable**.
 
 
 ## 2. Synchronizing Operations and Enforcing Ordering
+### Synchronize-with relationship
+How to achieve synchronize-with relationship?
+- data structure contain atomic types
+- perform appropriate atomic operation.
+
+In C++ standard:
+>An atomic operation A that performs a release operation on an atomic object M synchronizes with an atomic operation B that performs an acquire operation on M and takes its value from any side effect in the release sequence headed by A.
+
+If thread A stores a value and thread B reads that value, there's a synchronizes-with relationship between the store in thread A and load in thread B.
+
+### Happens-before relationship
+**Happens-before** specifies which operation see the effects of which other operations. Happens-before relationship follows transitive law, If operations in thread A happens-before operations in thread B, B to C, then A to C.
+
+### Memory ordering
+In `memory_order` enum. 6 ordering options represent three models: **sequentially consistent ordering**, **acquire_release ordering** and **relaxed ordering**.  
