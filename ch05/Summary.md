@@ -13,7 +13,7 @@ Two solutions for race condition:
 
 If there's no enforced ordering between two accesses to a single memory location from separate threads, one or both of those accesses is not atomic , and one or both is write, then this is a data race and causes undefined behavior.
 
-## Atomic operations
+## 1. Atomic operations
 An atomic operation is an indivisible operation. No half-done state.
 The standard **atomic types** can be found in `<atomic>`, and all operations on such types are atomic. The standard `<atomic>` types uses mutex: they (almost) all have an `x.is_lock_free()` function, which allows user to determine whether operations on a given type are done directly with atomic instructions(true), or by using a lock internal(false).
 The standard atomic types are not copyable or assignable in the conventional sense.
@@ -109,4 +109,8 @@ This is called **spurious failure**, and can be tested through :
 Besides normal operations, `std::atomic<T*>` also support `fetch_add` and `fetch_sub`
 
 ### `atomic<>` primary class template
-In order to use `atomic<UDT>` for user-defined class `UDT`, this type must have a trivial copy-assignment operator. The type mustn't have any virtual functions or virtual base classes and must use the compiler-generated copy-assignment operator.
+In order to use `atomic<UDT>` for user-defined class `UDT`, this type must have a trivial copy-assignment operator. The type mustn't have any virtual functions or virtual base classes and must use the compiler-generated copy-assignment operator. Every base classes and non-static data member of a user-defined type must also have a trivial copy-assignment operator. (**permit `memcpy()`** operation)
+Besides, user-defined type must also be **bitwise equality comparable**.
+
+
+## 2. Synchronizing Operations and Enforcing Ordering
