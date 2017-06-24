@@ -129,4 +129,3 @@ If thread A stores a value and thread B reads that value, there's a synchronizes
 
 ### Memory ordering
 In `memory_order` enum. 6 ordering options represent three models: **sequentially consistent ordering**, **acquire_release ordering** and **relaxed ordering**.  
-sad
