@@ -128,4 +128,6 @@ If thread A stores a value and thread B reads that value, there's a synchronizes
 **Happens-before** specifies which operation see the effects of which other operations. Happens-before relationship follows transitive law, If operations in thread A happens-before operations in thread B, B to C, then A to C.
 
 ### Memory ordering
-In `memory_order` enum. 6 ordering options represent three models: **sequentially consistent ordering**, **acquire_release ordering** and **relaxed ordering**.  
+In `memory_order` enum. 6 ordering options represent three models: **sequentially consistent ordering**, **acquire_release ordering** and **relaxed ordering**.
+
+**sequentially consistent** means that if all operations on instances of atomic types are sequentially consistent, the behavior of a multi-threaded program is as if all these operations were performed in some particular sequence by a single thread. 
