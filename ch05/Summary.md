@@ -133,3 +133,7 @@ In `memory_order` enum. 6 ordering options represent three models: **sequentiall
 **sequentially consistent** means that if all operations on instances of atomic types are sequentially consistent, the behavior of a multi-threaded program is as if all these operations were performed in some particular sequence by a single thread. A sequentially consistent synchronizes-with a sequentially consistent load of the same variable that reads the value stored. On a weakly ordered machine with many processors, it can impose a noticeable performance penalty, because the overall sequence of operations must be kept consistent between the processors, possibly requiring extensive synchronization operations between processors.
 
 **Non-sequentially consistent memory operation**
+Different threads can see different views of the same operations, and any mental model you have of operations from different threads neatly interleaved one after the other must be thrown away.
+Not only do you have to throw out mental models based on interleaving operations, you also have to throw out mental based on the idea of the compiler or processor reordering the instructions. **In the absence of other ordering constraints, the only requirement is that all threads agree on the modification order of each individual varaible.**
+
+**Relaxed Order**
